@@ -5,7 +5,7 @@ import os
 from PIL import Image, ImageDraw
 
 rand = random.SystemRandom(0)
-os.environ['PYTHON_JIT'] = "1"
+os.environ["PYTHON_JIT"] = "1"
 
 class Sparce:
     size = 2 ** 9
