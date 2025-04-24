@@ -8,8 +8,8 @@ rand = random.SystemRandom(0)
 os.environ['PYTHON_JIT'] = "1"
 
 class Sparce:
-    size = 2 ** 12
-    width = 2 ** 11
+    size = 2 ** 9
+    width = 340
     scheme = {
         0: [1, 0],
         1: [0, None],
