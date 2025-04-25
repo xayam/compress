@@ -6,8 +6,8 @@ from c.sparce import *
 
 
 class Sparce:
-    size = 2 ** 10
-    width = 2 ** 9 - 1
+    size = 2 ** 8
+    width = 2 ** 7
     scheme = {
         0: [1, 0],
         1: [0, None],
@@ -57,7 +57,7 @@ class Sparce:
             try:
                 value = data.__next__()
                 count += 1
-                self.progress(f"Compressing: {count}/{self.width}")
+                self.progress(f"Compressing: {count + 1}/{self.width}")
             except StopIteration:
                 break
             self.dataset.append(value)
@@ -108,7 +108,7 @@ class Sparce:
         curr += 1
         recovery.append(v)
         # print("#1", x_curr, y_curr, x_two, y_two, v)
-        for _ in range(self.width):
+        for _ in range(1, self.width):
             dx = data[curr][0] - data[curr - 1][0]
             dy = data[curr][1] - data[curr - 1][1]
             value = self.space([y_curr + dy, x_curr + dx])
@@ -118,8 +118,8 @@ class Sparce:
             x_two = x_two + dx
             y_two = y_two + dy
             # print("#2", dx, dy, x_curr, y_curr, x_two, y_two, value)
-            self.progress(f"Decompressing: {curr}/{self.width}")
             curr += 1
+            self.progress(f"Decompressing: {curr}/{self.width}")
         print("")
         self.decode_save(recovery)
         return recovery
@@ -147,24 +147,34 @@ class Sparce:
         self.v = 1
         self.count = 1
         self.last_del = -1
-        self.route = [{"v": self.v, "d": 1}] * self.count
-        self.route += [{"v": self.v, "d": 0}] * self.count
+        self.route = dict()
+        self.route[0] = 1
+        self.route[1] = 0
+        self.route_index = 2
+        self.route_last_del = -1
         self.d = 0
         self.spiral_expand()
         return None
 
     def route_expand(self):
+        for i in range(self.route_last_del + 1, self.route_index - 4 * self.count):
+            self.route.__delitem__(i)
+            self.route_last_del = i
         for i in range(2):
             self.count += 1
             self.d += 1
             self.v += 1
             if self.d > 3:
                 self.d = 0
-            self.route += [{"v": self.v, "d": self.d}] * self.count
+            for _ in range(self.count):
+                self.route[self.route_index] = self.d
+                self.route_index += 1
             self.d += 1
             if self.d > 3:
                 self.d = 0
-            self.route += [{"v": self.v, "d": self.d}] * self.count
+            for _ in range(self.count):
+                self.route[self.route_index] = self.d
+                self.route_index += 1
 
     def space(self, position):
         x, y = position
@@ -202,7 +212,7 @@ class Sparce:
         return False
 
     def get_random(self):
-        for _ in range(self.width + 1):
+        for _ in range(self.width):
             value = rand.choice([0, 1])
             yield value
 
@@ -214,7 +224,7 @@ class Sparce:
             binary_str = bin(byte)[2:].zfill(8)
             for binary in binary_str:
                 count += 1
-                if count <= self.width:
+                if count < self.width:
                     yield int(binary)
                 else:
                     break
@@ -269,8 +279,8 @@ class Sparce:
             self.current = [
                 self.current[0], self.current[1],
                 dx, dy,
-                self.directions[self.route[self.index]["d"]][0],
-                self.directions[self.route[self.index]["d"]][1]
+                self.directions[self.route[self.index]][0],
+                self.directions[self.route[self.index]][1]
             ]
             if (0 > self.current[0]) or (self.current[0] >= self.n) or \
                     (0 > self.current[1]) or (self.current[1] >= self.n):
@@ -292,7 +302,6 @@ class Sparce:
         elif position is not None:
             while True:
                 try:
-                    # print(position, len(self.result2))
                     return self.result2[position]
                 except KeyError:
                     self.spiral_expand()
