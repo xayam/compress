@@ -2,7 +2,7 @@ import sys
 
 from PIL import Image, ImageDraw
 
-from . import *
+from c.sparce import *
 
 
 class Sparce:
