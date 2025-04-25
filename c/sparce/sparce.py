@@ -275,11 +275,14 @@ class Sparce:
         sys.stdout.write("\r" + message)
         sys.stdout.flush()
 
-
-if __name__ == "__main__":
+def main():
     s = Sparce()
     compress = s.compress(data=s.get_random())
     decompress = s.decompress(compress)
     # print(s.dataset)
     # print(decompress)
     assert s.dataset == decompress
+
+
+if __name__ == "__main__":
+    main()
