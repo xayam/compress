@@ -6,8 +6,8 @@ from c.sparce import *
 
 
 class Sparce:
-    size = 2 ** 12
-    width = 2 ** 11 - 1
+    size = 2 ** 10
+    width = 2 ** 9 - 1
     scheme = {
         0: [1, 0],
         1: [0, None],
@@ -99,6 +99,7 @@ class Sparce:
     def decode(self, data):
         print("Start decompress...")
         # print(len(data))
+        self.spiral_init(n=2 * self.size - 1)
         recovery = []
         curr = 0
         x_curr, y_curr, _, _, _, _ = self.spiral(position=curr)
@@ -139,12 +140,13 @@ class Sparce:
         self.step_size = 1
         self.dir_changes = 0
         self.current = [self.result[0][0], self.result[0][1], 0, 0, 0, 0]
-        self.result2 = [self.current]
+        self.result2 = {0: self.current}
         self.pos = 1
         self.index = 0
         self.ss = 0
         self.v = 1
         self.count = 1
+        self.last_del = -1
         self.route = [{"v": self.v, "d": 1}] * self.count
         self.route += [{"v": self.v, "d": 0}] * self.count
         self.d = 0
@@ -229,6 +231,10 @@ class Sparce:
     def spiral_expand(self):
         count = 0
         dirs = 1
+        self.result = self.result[-1:]
+        for i in range(self.last_del + 1, self.pos - 1):
+            self.result2.__delitem__(i)
+            self.last_del = i
         while len(self.result) < self.n * self.n:
             for ss in range(self.step_size):
                 dx, dy = self.directions[self.current_dir]
@@ -257,7 +263,7 @@ class Sparce:
             return None
         self.route_expand()
         i = 0
-        for point in self.result[-count:]:
+        for point in self.result[1:]:
             i += 1
             dx, dy = point[0] - self.current[0], point[1] - self.current[1]
             self.current = [
@@ -269,10 +275,10 @@ class Sparce:
             if (0 > self.current[0]) or (self.current[0] >= self.n) or \
                     (0 > self.current[1]) or (self.current[1] >= self.n):
                 return None
-            self.result2.append(self.current[:])
+            self.result2[self.pos] = self.current[:]
             self.current = point[:]
             self.index += 1
-            self.pos += i
+            self.pos += 1
         return None
 
     def spiral(self, value=None, position=None):
@@ -286,8 +292,9 @@ class Sparce:
         elif position is not None:
             while True:
                 try:
+                    # print(position, len(self.result2))
                     return self.result2[position]
-                except IndexError:
+                except KeyError:
                     self.spiral_expand()
         return None
 
