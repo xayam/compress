@@ -6,8 +6,8 @@ from c.sparce import *
 
 
 class Sparce:
-    size = 2 ** 9
-    width = 340
+    size = 2 ** 12
+    width = 2 ** 11
     scheme = {
         0: [1, 0],
         1: [0, None],
@@ -26,12 +26,12 @@ class Sparce:
 
     def init(self):
         # print(1)
-        self.init_spiral(n=2 * self.size - 1)
+        self.spiral_init(n=2 * self.size - 1)
         # print(2)
         self.img = Image.new(mode="1", size=(self.size, self.size), color=0)
         self.draw = ImageDraw.Draw(self.img)
 
-    def compress(self, data):
+    def encode(self, data):
         print("Start compress...")
         self.dataset = []
         self.additions = []
@@ -61,16 +61,16 @@ class Sparce:
                 break
             self.dataset.append(value)
             # print("#2", x_curr, y_curr, dx1, dy1, dx2, dy2, curr, value)
-            if self.get_inner([y_curr + dy1, x_curr + dx1]) == value:
+            if self.space([y_curr + dy1, x_curr + dx1]) == value:
                 dx, dy = p2, p3
-                curr = self.scan_spiral(value=[x_curr + 2 * dx1, y_curr + 2 * dy1])
+                curr = self.spiral_scan(value=[x_curr + 2 * dx1, y_curr + 2 * dy1])
                 p0, p1, p2, p3, p4, p5 = self.spiral(position=curr)
                 _, _, dx1, dy1, dx2, dy2 = p0, p1, p2, p3, p4, p5
                 # print("#3", dx, dy, dx1, dy1, curr, x_curr, y_curr)
-            elif self.get_inner([y_curr + dy1 + dy2, x_curr + dx1 + dx2]) == value:
+            elif self.space([y_curr + dy1 + dy2, x_curr + dx1 + dx2]) == value:
                 dy = p3 + p5
                 dx = p2 + p4
-                curr = self.scan_spiral(value=[x_curr + 2 * (dx1 + dx2), y_curr + 2 * (dy1 + dy2)])
+                curr = self.spiral_scan(value=[x_curr + 2 * (dx1 + dx2), y_curr + 2 * (dy1 + dy2)])
                 p0, p1, p2, p3, p4, p5 = self.spiral(position=curr)
                 _, _, dx1, dy1, dx2, dy2 = p0, p1, p2, p3, p4, p5
                 # print("#4", dx, dy, dx1, dy1, dx2, dy2, curr, x_curr, y_curr)
@@ -89,7 +89,7 @@ class Sparce:
         print("")
         return result
 
-    def decompress(self, data):
+    def decode(self, data):
         print("Start decompress...")
         # print(len(data))
         recovery = []
@@ -103,7 +103,7 @@ class Sparce:
         for _ in range(self.width):
             dx = data[curr][0] - data[curr - 1][0]
             dy = data[curr][1] - data[curr - 1][1]
-            value = self.get_inner([y_curr + dy, x_curr + dx])
+            value = self.space([y_curr + dy, x_curr + dx])
             recovery.append(value)
             x_curr = x_curr + 2 * dx
             y_curr = y_curr + 2 * dy
@@ -113,14 +113,14 @@ class Sparce:
             self.progress(f"Decompressing: {curr}/{self.width}")
             curr += 1
         print("")
-        self.save(recovery)
+        self.decode_save(recovery)
         return recovery
 
     @staticmethod
     def sign(value):
         return 1 if value >= 0 else -1
 
-    def init_spiral(self, n):
+    def spiral_init(self, n):
         self.n = n
         if self.n == 0:
             return []
@@ -141,10 +141,10 @@ class Sparce:
         self.route = [{"v": self.v, "d": 1}] * self.count
         self.route += [{"v": self.v, "d": 0}] * self.count
         self.d = 0
-        self.expand_spiral()
+        self.spiral_expand()
         return None
 
-    def expand_route(self):
+    def route_expand(self):
         for i in range(2):
             self.count += 1
             self.d += 1
@@ -157,13 +157,13 @@ class Sparce:
                 self.d = 0
             self.route += [{"v": self.v, "d": self.d}] * self.count
 
-    def get_inner(self, position):
+    def space(self, position):
         x, y = position
         result = self.scheme[x % 2][y % 2]
         return result
 
     @staticmethod
-    def save(recovery, filename="decompress.txt"):
+    def decode_save(recovery, filename="decompress.txt"):
         # print(self.dataset)
         # print(recovery)
         recovery = "".join(map(str, recovery))
@@ -174,7 +174,7 @@ class Sparce:
                 )
                 f.write(char)
 
-    def phase2(self):
+    def encode_phase2(self):
         img2 = Image.new(mode="1", size=(self.size, self.size), color=0)
         draw2 = ImageDraw.Draw(img2)
         for r in range(len(self.results)):
@@ -185,7 +185,7 @@ class Sparce:
         img2.save("compress2.png", format="PNG")
 
     @staticmethod
-    def has_common_element(arr1, arr2):
+    def has_element(arr1, arr2):
         set_arr2 = set(tuple(point) for point in arr2)
         for point in arr1:
             if tuple(point) in set_arr2:
@@ -210,7 +210,7 @@ class Sparce:
                 else:
                     break
 
-    def scan_spiral(self, value):
+    def spiral_scan(self, value):
         # print(self.result2)
         # print(value)
         for i in range(len(self.result2)):
@@ -219,7 +219,7 @@ class Sparce:
                 return i
         return None
 
-    def expand_spiral(self):
+    def spiral_expand(self):
         count = 0
         dirs = 1
         while len(self.result) < self.n * self.n:
@@ -243,12 +243,12 @@ class Sparce:
                 self.step_size += 1
             if dirs > 4:
                 break
-        return self.update_spiral(count=count)
+        return self.spiral_update(count=count)
 
-    def update_spiral(self, count):
+    def spiral_update(self, count):
         if count == 0:
             return None
-        self.expand_route()
+        self.route_expand()
         i = 0
         for point in self.result[-count:]:
             i += 1
@@ -269,7 +269,7 @@ class Sparce:
         return None
 
     def spiral(self, position):
-        self.expand_spiral()
+        self.spiral_expand()
         return self.result2[position]
 
     @staticmethod
@@ -279,8 +279,8 @@ class Sparce:
 
 def main():
     s = Sparce()
-    compress = s.compress(data=s.get_random())
-    decompress = s.decompress(compress)
+    compress = s.encode(data=s.get_random())
+    decompress = s.decode(compress)
     # print(s.dataset)
     # print(decompress)
     assert s.dataset == decompress
