@@ -6,8 +6,8 @@ from c.sparce import *
 
 
 class Sparce:
-    size = 2 ** 12
-    width = 2 ** 11
+    size = 2 ** 7
+    width = 2 ** 6 - 1
     scheme = {
         0: [1, 0],
         1: [0, None],
@@ -279,7 +279,7 @@ class Sparce:
 
 def main():
     s = Sparce()
-    compress = s.encode(data=s.get_random())
+    compress = s.encode(data=s.get_input())
     decompress = s.decode(compress)
     # print(s.dataset)
     # print(decompress)
