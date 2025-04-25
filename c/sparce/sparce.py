@@ -279,7 +279,7 @@ class Sparce:
 
 def main():
     s = Sparce()
-    compress = s.encode(data=s.get_input())
+    compress = s.encode(data=s.get_random())
     decompress = s.decode(compress)
     # print(s.dataset)
     # print(decompress)
