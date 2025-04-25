@@ -169,7 +169,9 @@ class Sparce:
         recovery = "".join(map(str, recovery))
         with open(filename, mode="w", encoding="windows-1251") as f:
             for i in range(0, len(recovery), 8):
-                char = bytes([int(recovery[i: i + 8] , 2)]).decode("windows-1251")
+                char = bytes([int(recovery[i: i + 8] , 2)]).decode(
+                    "windows-1251", errors="ignore"
+                )
                 f.write(char)
 
     def phase2(self):
