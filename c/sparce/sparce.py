@@ -1,11 +1,9 @@
-import random
 import sys
-import os
 
 from PIL import Image, ImageDraw
 
-rand = random.SystemRandom(0)
-os.environ["PYTHON_JIT"] = "1"
+from . import *
+
 
 class Sparce:
     size = 2 ** 9
