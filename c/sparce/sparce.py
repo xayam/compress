@@ -6,8 +6,8 @@ from c.sparce import *
 
 
 class Sparce:
-    size = 2 ** 7
-    width = 2 ** 6 - 1
+    size = 2 ** 12
+    width = 2 ** 11 - 1
     scheme = {
         0: [1, 0],
         1: [0, None],
@@ -20,6 +20,7 @@ class Sparce:
     dataset = None
     results = []
     counts = [2]
+    state = None
 
     def __init__(self):
         self.init()
@@ -63,14 +64,20 @@ class Sparce:
             # print("#2", x_curr, y_curr, dx1, dy1, dx2, dy2, curr, value)
             if self.space([y_curr + dy1, x_curr + dx1]) == value:
                 dx, dy = p2, p3
-                curr = self.spiral_scan(value=[x_curr + 2 * dx1, y_curr + 2 * dy1])
+                curr = self.spiral(
+                    value=[x_curr + 2 * dx1, y_curr + 2 * dy1],
+                    position=curr
+                )
                 p0, p1, p2, p3, p4, p5 = self.spiral(position=curr)
                 _, _, dx1, dy1, dx2, dy2 = p0, p1, p2, p3, p4, p5
                 # print("#3", dx, dy, dx1, dy1, curr, x_curr, y_curr)
             elif self.space([y_curr + dy1 + dy2, x_curr + dx1 + dx2]) == value:
                 dy = p3 + p5
                 dx = p2 + p4
-                curr = self.spiral_scan(value=[x_curr + 2 * (dx1 + dx2), y_curr + 2 * (dy1 + dy2)])
+                curr = self.spiral(
+                    value=[x_curr + 2 * (dx1 + dx2), y_curr + 2 * (dy1 + dy2)],
+                    position=curr
+                )
                 p0, p1, p2, p3, p4, p5 = self.spiral(position=curr)
                 _, _, dx1, dy1, dx2, dy2 = p0, p1, p2, p3, p4, p5
                 # print("#4", dx, dy, dx1, dy1, dx2, dy2, curr, x_curr, y_curr)
@@ -210,14 +217,14 @@ class Sparce:
                 else:
                     break
 
-    def spiral_scan(self, value):
-        # print(self.result2)
-        # print(value)
-        for i in range(len(self.result2)):
-            # print(i)
-            if (self.spiral(i)[0] == value[0]) and (self.spiral(i)[1] == value[1]):
-                return i
-        return None
+    # def spiral_scan(self, current, value):
+    #     # print(self.result2)
+    #     # print(value)
+    #     for i in range(len(self.result2)):
+    #         # print(i)
+    #         if (self.spiral(i)[0] == value[0]) and (self.spiral(i)[1] == value[1]):
+    #             return i
+    #     return None
 
     def spiral_expand(self):
         count = 0
@@ -268,9 +275,21 @@ class Sparce:
             self.pos += i
         return None
 
-    def spiral(self, position):
-        self.spiral_expand()
-        return self.result2[position]
+    def spiral(self, value=None, position=None):
+        if value is not None:
+            i = position
+            while True:
+                point = self.spiral(position=i)
+                if (point[0] == value[0]) and (point[1] == value[0]):
+                    return i
+                i += 1
+        elif position is not None:
+            while True:
+                try:
+                    return self.result2[position]
+                except IndexError:
+                    self.spiral_expand()
+        return None
 
     @staticmethod
     def progress(message: str) -> None:
