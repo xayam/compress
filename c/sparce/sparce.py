@@ -134,7 +134,6 @@ class Sparce:
             return []
         self.x = self.y = self.n // 2
         self.result = [[self.x, self.y]]
-        self.visited = {(self.x, self.y)}
         self.directions = [(1, 0), (0, -1), (-1, 0), (0, 1)]
         self.current_dir = 0
         self.step_size = 1
@@ -157,7 +156,7 @@ class Sparce:
         return None
 
     def route_expand(self):
-        for i in range(self.route_last_del + 1, self.route_index - 4 * self.count):
+        for i in range(self.route_last_del + 1, self.route_index - 2 * self.count):
             self.route.__delitem__(i)
             self.route_last_del = i
         for i in range(2):
@@ -251,12 +250,10 @@ class Sparce:
                 new_x = self.result[-1][0] + dx
                 new_y = self.result[-1][1] + dy
                 if 0 <= new_x < self.n and 0 <= new_y < self.n:
-                    if (new_x, new_y) not in self.visited:
-                        self.result.append([new_x, new_y])
-                        count += 1
-                        self.visited.add((new_x, new_y))
-                        if len(self.result) == self.n * self.n:
-                            break
+                    self.result.append([new_x, new_y])
+                    count += 1
+                    if len(self.result) == self.n * self.n:
+                        break
             if len(self.result) == self.n * self.n:
                 break
             self.current_dir = (self.current_dir + 1) % 4
