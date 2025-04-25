@@ -6,21 +6,18 @@ from c.sparce import *
 
 
 class Sparce:
-    size = 2 ** 8
     width = 2 ** 7
+    size = 2 * width
     scheme = {
         0: [1, 0],
         1: [0, None],
     }
-    inner = []
     img = None
     draw = None
     additions = []
     recovery = []
     dataset = None
     results = []
-    counts = [2]
-    state = None
 
     def __init__(self):
         self.init()
