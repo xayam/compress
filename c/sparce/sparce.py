@@ -1,12 +1,13 @@
 import sys
 
+import numpy
 from PIL import Image, ImageDraw
 
 from c.sparce import *
 
 
 class Sparce:
-    width = 2 ** 11
+    width = 2 ** 8
     size = 2 * width
     scheme = {
         0: [1, 0],
@@ -20,17 +21,16 @@ class Sparce:
     results = []
 
     def __init__(self):
-        self.init()
+        pass
 
     def init(self):
-        # print(1)
-        self.spiral_init(n=2 * self.size - 1)
-        # print(2)
         self.img = Image.new(mode="1", size=(self.size, self.size), color=0)
         self.draw = ImageDraw.Draw(self.img)
+        self.spiral_init(n=2 * self.size - 1)
 
-    def encode(self, data):
+    def encode(self, data, filename):
         print("Start compress...")
+        self.init()
         self.dataset = []
         self.additions = []
         result = []
@@ -91,16 +91,15 @@ class Sparce:
             result.append((x_two, y_two))
             self.additions.append({"x": x_two, "y": y_two, "v": value})
             self.draw.point((x_two, y_two), fill=1)
-            self.img.save("compress.png", format="PNG")
-            # if count % 10 == 0:
-            #     sys.exit()
+            self.img.save(filename, format="PNG")
+        self.img.close()
         print("")
         return result
 
     def decode(self, data):
         print("Start decompress...")
         # print(len(data))
-        self.spiral_init(n=2 * self.size - 1)
+        self.init()
         recovery = []
         curr = 0
         x_curr, y_curr, _, _, _, _ = self.spiral(position=curr)
@@ -212,8 +211,8 @@ class Sparce:
         return False
 
     def get_random(self):
-        for _ in range(self.width):
-            value = rand.choice([0, 1])
+        for i in range(self.width):
+            value = rand.choice([1, 1, 0])
             yield value
 
     def get_input(self, filename="input.txt"):
@@ -322,9 +321,55 @@ class Sparce:
         sys.stdout.write("\r" + message)
         sys.stdout.flush()
 
+    def find_best_rotation(self):
+        # img1 = "compress1_text.png"
+        img2 = "compress1_random.png"
+        # self.encode(data=self.get_input(), filename=img1)
+        self.encode(data=self.get_random(), filename=img2)
+        image2 = Image.open(img2)
+        # image1.save("test.png", format="PNG")
+        # image2 = Image.open(img2)
+        # numpy1 = numpy.asarray(image2)
+        count = 4 * self.size - 2
+        delta = 360. / count
+        angle = delta
+        angles = []
+        rotates = []
+        sizes = []
+        valid = []
+        for c in range(count):
+            rotate = image2.rotate(angle)
+            filename = f"rotate/r_{angle}.png"
+            rotate.save(filename)
+            sizes.append(os.stat(filename).st_size)
+            angle += delta
+            self.progress(f"{c + 1}/{count}")
+            numpy2 = numpy.asarray(rotate)
+            rotates.append(rotate.copy())
+            counts = 0
+            for x in range(self.size):
+                for y in range(self.size):
+                    if numpy2[x][y]:
+                        counts += 1
+            valid.append(counts == self.width)
+            angles.append(angle)
+        minimum = 10 ** 100
+        index = 0
+        for i in range(len(sizes)):
+            if (sizes[i] < minimum) and valid[i]:
+                minimum = sizes[i]
+                index = i
+        print("")
+        print(f"Best angle = {angles[index]}")
+        rotates[index].save("compress.png", format="PNG")
+        recovery = rotates[index].rotate(-angles[index])
+        recovery.save("recovery.png", format="PNG")
+        recovery.close()
+
 def main():
     s = Sparce()
-    compress = s.encode(data=s.get_random())
+    # s.find_best_rotation()
+    compress = s.encode(data=s.get_random(), filename="compress.png")
     decompress = s.decode(compress)
     # print(s.dataset)
     # print(decompress)
