@@ -50,10 +50,12 @@ class Sparce:
         result.append((x_two, y_two))
         self.additions.append({"x": x_two, "y": y_two, "v": v})
         # print("#1", x_curr, x_curr, v)
+        # count = 0
         while True:
+            # count += 1
             try:
                 value = data.__next__()
-                count += 1
+                # count += 1
                 self.progress(f"Compressing: {count + 1}/{self.width}")
             except StopIteration:
                 break
@@ -67,7 +69,7 @@ class Sparce:
                 )
                 p0, p1, p2, p3, p4, p5 = self.spiral(position=curr)
                 _, _, dx1, dy1, dx2, dy2 = p0, p1, p2, p3, p4, p5
-                # print("#3", dx, dy, dx1, dy1, curr, x_curr, y_curr)
+                # print("#3", x_curr, y_curr, dx, dy, dx1, dy1, curr)
             elif self.space([y_curr + dy1 + dy2, x_curr + dx1 + dx2]) == value:
                 dy = p3 + p5
                 dx = p2 + p4
@@ -77,7 +79,7 @@ class Sparce:
                 )
                 p0, p1, p2, p3, p4, p5 = self.spiral(position=curr)
                 _, _, dx1, dy1, dx2, dy2 = p0, p1, p2, p3, p4, p5
-                # print("#4", dx, dy, dx1, dy1, dx2, dy2, curr, x_curr, y_curr)
+                # print("#4", x_curr, y_curr, dx, dy, dx1, dy1, dx2, dy2, curr)
             else:
                 raise Exception("Error 401")
             # print("#5", x_two, y_two, dx, dy, value, sep= ", ")
@@ -90,6 +92,8 @@ class Sparce:
             self.additions.append({"x": x_two, "y": y_two, "v": value})
             self.draw.point((x_two, y_two), fill=1)
             self.img.save("compress.png", format="PNG")
+            # if count % 10 == 0:
+            #     sys.exit()
         print("")
         return result
 
@@ -288,11 +292,23 @@ class Sparce:
     def spiral(self, value=None, position=None):
         if value is not None:
             i = position
+            current = self.spiral(position=i)
+            buffer = current[:]
+            # count = 0
+            # print(self.result2)
             while True:
-                point = self.spiral(position=i)
-                if (point[0] == value[0]) and (point[1] == value[0]):
-                    return i
+                # count += 1
+                # if count % 40 == 0:
+                #     sys.exit()
                 i += 1
+                # print(buffer, i, position, value)
+                if (buffer[0] == value[0]) and (buffer[1] == value[1]):
+                    return i - 1
+                point = self.spiral(position=i)
+                dx = point[0] - current[0]
+                dy = point[1] - current[1]
+                buffer = [buffer[0] + dx, buffer[1] + dy]
+                current = point[:]
         elif position is not None:
             while True:
                 try:
