@@ -6,7 +6,7 @@ from c.sparce import *
 
 
 class Sparce:
-    width = 2 ** 7
+    width = 2 ** 11
     size = 2 * width
     scheme = {
         0: [1, 0],
@@ -50,13 +50,13 @@ class Sparce:
         result.append((x_two, y_two))
         self.additions.append({"x": x_two, "y": y_two, "v": v})
         # print("#1", x_curr, x_curr, v)
-        # count = 0
+        count = 1
         while True:
             # count += 1
             try:
                 value = data.__next__()
-                # count += 1
-                self.progress(f"Compressing: {count + 1}/{self.width}")
+                count += 1
+                self.progress(f"Compressing: {count}/{self.width}")
             except StopIteration:
                 break
             self.dataset.append(value)
