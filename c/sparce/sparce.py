@@ -211,18 +211,25 @@ class Sparce:
         return False
 
     def get_random(self):
-        img = Image.new(mode="1", size=(self.size, 1), color=0)
-        draw = ImageDraw.Draw(img)
-        x = 0
-        y = 0
+        # width = 3 ** 4
+        # size = width
+        # img = Image.new(mode="1", size=(size, size), color=0)
+        # draw = ImageDraw.Draw(img)
+        # x = 0
+        # y = 0
+        # for i in range(width):
+        #     value = rand.choice([0, 1, 2])
+        #     if value == 0:
+        #         x += 1
+        #     elif value == 1:
+        #         y += 1
+        #     else:
+        #         x += 1
+        #         y += 1
+        #     draw.point((x, y), fill=1)
+        # img.save("compress2.png", format="PNG")
         for i in range(self.width):
             value = rand.choice([0, 1])
-            if value:
-                x += 1
-            else:
-                x += 2
-            draw.point((x, y), fill=1)
-            img.save("compress2.png", format="PNG")
             yield value
 
     def get_input(self, filename="input.txt"):
