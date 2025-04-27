@@ -1,21 +1,22 @@
 from c.pyramid import *
 
 class Pyramid:
-    width = 8 * 8
+    width = 8
+    dataset = []
 
     def __init__(self):
-        pass
+        self.state = []
 
     def init(self):
         pass
 
-    def encode(self):
+    def encode(self, data):
         self.init()
-        return []
+        return data
 
-    def decode(self):
+    def decode(self, data):
         self.init()
-        return []
+        return data
 
     def save(self, filename):
         pass
@@ -25,25 +26,24 @@ class Pyramid:
             text = f.read()
         count = -1
         for byte in text:
-            binary_str = bin(byte)[2:].zfill(8)
-            for binary in binary_str:
-                count += 1
-                if count < self.width:
-                    yield int(binary)
-                else:
-                    break
+            count += 1
+            if count < self.width:
+                yield byte
+            else:
+                break
 
     def get_random(self):
-        for i in range(self.width):
-            value = rand.choice([0, 1])
+        choice_list = list(range(self.width))
+        for _ in range(self.width):
+            value = rand.choice(choice_list)
             yield value
 
 
 def main():
     p = Pyramid()
-    compress = p.encode()
-    decompress = p.decode()
-    assert compress == decompress
+    compress = p.encode(data=p.get_random())
+    decompress = p.decode(data=compress)
+    assert p.dataset == decompress
 
 if __name__ == "__main__":
     main()
