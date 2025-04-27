@@ -1,12 +1,9 @@
-import sys
-
 from c.fold import *
 
 class Fold:
     width = 3
     dataset = []
     state = []
-    recovery = []
 
     def __init__(self):
         pass
@@ -27,30 +24,30 @@ class Fold:
 
     def decode(self, data):
         print(data)
-        self.recovery_expand(data=[[data]])
+        if data != 0:
+            data = self.recovery(data=[[[data]]])
         return data
 
-    def recovery_expand(self, data, depth=1):
-        size = (abs(data[-1][0]) + 1) // 2 + 1
-        # print("size=" + str(size))
-        if depth == 20 * self.width:
-            # print(data)
-            return data
-        self.recovery.append(data)
+    def recovery(self, data, depth=1):
+        size = abs(data[-1][0][0])
+        print(f"size={size}")
+        print(data)
+        if depth > len(data):
+            return data[-1]
         current = data[-1]
-        for curr in current:
-            print(curr)
-            row = []
+        variants = [current]
+        for level in range(depth):
+            variant = []
             for x in range(-size, size + 1):
-                y = curr + x
-                if current != [x, y]:
-                    row.append([x, y])
-            for variant in row:
-                datas = data[:]
-                datas.append(variant)
-                print(datas)
-                return self.recovery_expand(data=datas, depth=depth + 1)
-        return None
+                y = current[-1][level] + x
+                variant.append([x, y])
+            print(variant)
+            for folder in variant:
+                datas = current[:]
+                datas.append(folder)
+                variants.append(datas)
+            print(variants)
+        return self.recovery(data=variants, depth=depth + 1)
 
     def save(self, filename):
         pass
