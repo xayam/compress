@@ -25,29 +25,27 @@ class Fold:
     def decode(self, data):
         print(data)
         if data != 0:
-            data = self.recovery(data=[[[data]]])
+            data = self.recovery(data=[data])
         return data
 
-    def recovery(self, data, depth=1):
-        size = abs(data[-1][0][0])
-        print(f"size={size}")
+    def recovery(self, data, depth=2):
         print(data)
-        if depth > len(data):
-            return data[-1]
-        current = data[-1]
-        variants = [current]
-        for level in range(depth):
+        if depth > self.width:
+            for value in data:
+                if value not in self.choice_list:
+                    return False
+            return True
+        for level in range(depth - 1):
+            size = abs(data[level])
+            print(f"size={size}")
             variant = []
             for x in range(-size, size + 1):
-                y = current[-1][level] + x
+                y = data[level] + x
                 variant.append([x, y])
-            print(variant)
-            for folder in variant:
-                datas = current[:]
-                datas.append(folder)
-                variants.append(datas)
-            print(variants)
-        return self.recovery(data=variants, depth=depth + 1)
+            for new_data in variant:
+                if self.recovery(data=new_data, depth=depth + 1):
+                    return new_data
+        return None
 
     def save(self, filename):
         pass
@@ -64,9 +62,9 @@ class Fold:
                 break
 
     def get_random(self):
-        choice_list = [0, 1, 2]  # list(range(2 ** 8))
+        self.choice_list = [0, 1, 2]  # list(range(2 ** 8))
         for i in range(self.width):
-            value = rand.choice(choice_list)
+            value = rand.choice(self.choice_list)
             yield value
 
 
@@ -74,6 +72,7 @@ def main():
     f = Fold()
     compress = f.encode(data=f.get_random())
     decompress = f.decode(data=compress)
+    print(f"decompress={decompress}")
     # assert f.dataset == decompress
 
 if __name__ == "__main__":
