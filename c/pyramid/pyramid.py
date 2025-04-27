@@ -3,19 +3,27 @@ from c.pyramid import *
 class Pyramid:
     width = 8
     dataset = []
+    state = []
+    recovery = []
 
     def __init__(self):
-        self.state = []
-
-    def init(self):
         pass
 
+    def init(self, data):
+        for level in range(self.width):
+            row = []
+            for i in range(self.width - level):
+                if level == 0:
+                    row.append(data[i])
+                else:
+                    row.append(data[i + 1] - data[i])
+            self.state.append(row)
+
     def encode(self, data):
-        self.init()
+        self.init(data=data)
         return data
 
     def decode(self, data):
-        self.init()
         return data
 
     def save(self, filename):
