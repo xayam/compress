@@ -7,7 +7,7 @@ from c.sparce import *
 
 
 class Sparce:
-    width = 2 ** 8
+    width = 2 ** 6
     size = 2 * width
     scheme = {
         0: [1, 0],
@@ -211,8 +211,18 @@ class Sparce:
         return False
 
     def get_random(self):
+        img = Image.new(mode="1", size=(self.size, 1), color=0)
+        draw = ImageDraw.Draw(img)
+        x = 0
+        y = 0
         for i in range(self.width):
-            value = rand.choice([1, 1, 0])
+            value = rand.choice([0, 1])
+            if value:
+                x += 1
+            else:
+                x += 2
+            draw.point((x, y), fill=1)
+            img.save("compress2.png", format="PNG")
             yield value
 
     def get_input(self, filename="input.txt"):
@@ -292,22 +302,14 @@ class Sparce:
         if value is not None:
             i = position
             current = self.spiral(position=i)
-            buffer = current[:]
-            # count = 0
-            # print(self.result2)
+            buffer = current[:2]
             while True:
-                # count += 1
-                # if count % 40 == 0:
-                #     sys.exit()
+                if buffer == value:
+                    return i
                 i += 1
-                # print(buffer, i, position, value)
-                if (buffer[0] == value[0]) and (buffer[1] == value[1]):
-                    return i - 1
-                point = self.spiral(position=i)
-                dx = point[0] - current[0]
-                dy = point[1] - current[1]
-                buffer = [buffer[0] + dx, buffer[1] + dy]
-                current = point[:]
+                point = self.spiral(position=i)[:2]
+                dx, dy = point[0] - current[0], point[1] - current[1]
+                buffer, current = [buffer[0] + dx, buffer[1] + dy], point[:]
         elif position is not None:
             while True:
                 try:
