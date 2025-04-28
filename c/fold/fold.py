@@ -9,7 +9,7 @@ class Fold:
         self.values = values
 
     def init(self, data):
-        self.dataset = [int(d) for d in data]
+        self.dataset = data
 
     def encode(self, data):
         self.init(data=data)
@@ -32,9 +32,9 @@ class Fold:
     def recovery(self, start, data, depth=1):
         # print(f"depth={depth}, data={data}")
         if len(data) == self.width:
-            if data[0] != start:
-                # print(False)
-                return False
+            # if data[0] != start:
+            #     # print(False)
+            #     return False
             for value in data:
                 if value not in self.values:
                     # print(False)
@@ -80,7 +80,7 @@ class Fold:
     def get_all(self):
         for j in range(len(self.values) ** self.width):
             value = bin(j)[2:].zfill(self.width)
-            yield value
+            yield [int(v) for v in value]
 
 def main():
     f = Fold(width=4, values=[0, 1])
