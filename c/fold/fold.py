@@ -41,19 +41,21 @@ class Fold:
             # print(True)
             # print(data)
             return data
-        size = abs(data[0])
+        size = self.width
         # print(f"size={size}")
         for x in range(-size, size + 1):
             # print(f"x={x}")
             variants = [x]
             for level in range(len(data)):
-                y = data[level] + variants[-1]
+                y = variants[-1] + data[level]
                 variants.append(y)
             # print(variants)
+            # if self.dataset == [1, 1, 0]:
+            #     print(size, x, variants)
             result = self.recovery(start=start, data=variants, depth=depth + 1)
             if result:
                 return result
-        return None
+        return False
 
     def save(self, filename):
         pass
@@ -84,7 +86,7 @@ class Fold:
 
 
 def main():
-    f = Fold(width=3)
+    f = Fold(width=4)
     dataset = f.get_all()
     while True:
         try:
