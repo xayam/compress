@@ -4,8 +4,9 @@ class Fold:
     dataset = []
     state = []
 
-    def __init__(self, width):
+    def __init__(self, width, values):
         self.width = width
+        self.values = values
 
     def init(self, data):
         self.dataset = [int(d) for d in data]
@@ -35,7 +36,7 @@ class Fold:
                 # print(False)
                 return False
             for value in data:
-                if value not in self.choice_list:
+                if value not in self.values:
                     # print(False)
                     return False
             # print(True)
@@ -72,21 +73,17 @@ class Fold:
                 break
 
     def get_random(self):
-        self.choice_list = [0, 1]  # list(range(2 ** 8))
         for i in range(self.width):
-            value = rand.choice(self.choice_list)
+            value = rand.choice(self.values)
             yield value
 
     def get_all(self):
-        self.choice_list = [0, 1]
-        for j in range(2 ** self.width):
+        for j in range(len(self.values) ** self.width):
             value = bin(j)[2:].zfill(self.width)
-            # print(value)
             yield value
 
-
 def main():
-    f = Fold(width=4)
+    f = Fold(width=4, values=[0, 1])
     dataset = f.get_all()
     while True:
         try:
