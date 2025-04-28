@@ -28,23 +28,26 @@ class Fold:
             data = self.recovery(data=[data])
         return data
 
-    def recovery(self, data, depth=2):
-        print(data)
-        if depth > self.width:
+    def recovery(self, data, depth=1):
+        print(f"depth={depth}, data={data}")
+        if depth == len(data):
             for value in data:
                 if value not in self.choice_list:
+                    print(False)
                     return False
+            print(True)
             return True
-        for level in range(depth - 1):
-            size = abs(data[level])
-            print(f"size={size}")
-            variant = []
-            for x in range(-size, size + 1):
-                y = data[level] + x
-                variant.append([x, y])
-            for new_data in variant:
-                if self.recovery(data=new_data, depth=depth + 1):
-                    return new_data
+        size = abs(data[0])
+        print(f"size={size}")
+        for x in range(-size, size + 1):
+            print(f"x={x}")
+            variants = [x]
+            for level in range(depth):
+                y = data[level] + variants[-1]
+                variants.append(y)
+                print(variants)
+                if self.recovery(data=variants, depth=depth + 1):
+                    return variants
         return None
 
     def save(self, filename):
