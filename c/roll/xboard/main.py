@@ -1,9 +1,10 @@
-from state import State
+from config import *
+from board import Board
 
 
 def main():
-    s = State()
-    print(s)
+    sxboard = Board(size=SIZE)
+    print(sxboard)
 
 if __name__ == "__main__":
     main()
