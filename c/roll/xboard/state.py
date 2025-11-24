@@ -1,6 +1,6 @@
 from tetra import Tetra
-from group import Group
 from field import Field
+from group import Group
 
 class State:
 
