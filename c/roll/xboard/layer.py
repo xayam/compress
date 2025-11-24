@@ -3,14 +3,13 @@ from state import State
 
 class Layer(State):
 
-    def __init__(self, name: str):
+    def __init__(self, name: str, size: int):
         self.name = name
+        self.size = size
         self.groups = None
-
         State.__init__(self)
-
         self.start()
-        self.init(groups=self.groups)
 
     def start(self):
         pass
+        self.init(groups=self.groups)
