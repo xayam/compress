@@ -1,0 +1,25 @@
+```python
+if __name__ == "__main__":
+    # ? P(W)
+    # P(W) = lim sum log2[x + 1], x = 1 to log2[y] as y->W
+    # L = math.ceil(P(W)) + 1
+	
+    main(verbose=1)
+```
+
+
+>>> python.exe n3validation.py 
+
+index=1, width=    1, 
+         summa=    0, max_count=             1, max_ones=    1, max_bits_key= 2, percent= 200.0%
+index=2, width=    3, 
+         summa=    1, max_count=             2, max_ones=    3, max_bits_key= 4, percent=133.33%
+index=3, width=    7, 
+         summa=    3, max_count=             8, max_ones=    7, max_bits_key= 7, percent= 100.0%
+index=4, width=   31, 
+         summa=    7, max_count=           128, max_ones=   31, max_bits_key=13, percent=41.935%
+index=5, width=  511, 
+         summa=   19, max_count=        524288, max_ones=  511, max_bits_key=29, percent=5.6751%
+index=6, width=65535, 
+         summa=   45, max_count=35184372088832, max_ones=65535, max_bits_key=62, percent=0.0946%
+		 
