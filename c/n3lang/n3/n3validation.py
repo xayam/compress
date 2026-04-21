@@ -2,7 +2,7 @@ import math
 import pprint
 import sys
 
-import n3lang.n3recovery
+from n3recovery import n3c_recovery
 from n3sort import n3c_sort
 from n3utils import colorize_bool, get_sum_width
 
@@ -11,7 +11,7 @@ def n3c_validation():
     verbose = 1
     # print(get_annotation())
     # print(f"Decompressing...")
-    for width in range(4, 5):
+    for width in range(2, 3):
         # [8, 32, 512,  65536]
         results = dict()
         for d in range(2 ** width):
@@ -19,22 +19,24 @@ def n3c_validation():
             arr = [int(char) for char in s]
             data = arr[:]
             if verbose > 0:
-                print(f"Compressing...\n")
+                print(f"Compressing...")
             values = n3c_sort(data, verbose)
-            # values["width"] = width
-            # values["verbose"] = 1
-            # values.__delitem__("data")
-            # values.__delitem__("zeros")
-            # recovery = n3lang.n3recovery.n3c_recovery(**values)
-            # assertion = recovery == s
-            # print(
-            #     f"{colorize_bool(assertion)} width={width} " +
-            #     f"'{s}' -> '{recovery}'"
-            # )
-            # assert assertion
+            values["width"] = width
+            values["verbose"] = 1
+            values.__delitem__("data")
+            values.__delitem__("zeros")
+            if verbose > 0:
+                print(f"Dempressing...")
+            recovery = n3c_recovery(**values)
+            assertion = recovery == s
+            print(
+                f"{colorize_bool(assertion)} width={width} " +
+                f"'{s}' -> '{recovery}'"
+            )
+            assert assertion
 
 
-def main(degrees=None, verbose=0) -> str:
+def main(degrees=1, verbose=1) -> str:
     # if degrees is None:
     #     windows = [i for i in range(1, 2**20)]
     # else:
@@ -72,4 +74,5 @@ def main(degrees=None, verbose=0) -> str:
 
 
 if __name__ == "__main__":
+    # main()
     n3c_validation()
