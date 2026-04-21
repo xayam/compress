@@ -40,8 +40,8 @@ def n3c_sort(input_data: List[int], verbose=0) -> dict:
                         print(message)
                     count += 1
                     last = 2
-                    if best == data:
-                        break
+                    # if best == data:
+                    break
             first = 1
         elif first == 1:
             for position in range(pos, 0, -1):
@@ -53,8 +53,8 @@ def n3c_sort(input_data: List[int], verbose=0) -> dict:
                         print(message)
                     count += 1
                     last = 1
-                    if best == data:
-                        break
+                    # if best == data:
+                    break
             first = 2
         if count1 > 10:
             break

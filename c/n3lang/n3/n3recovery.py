@@ -13,10 +13,10 @@ def n3c_recovery(width: int,
     pos = 0
     data = best[:]
     flag = False
-    while (count > 0) and not flag:
-        print(last)
+    while count > 0:
+        print(last, data)
         if last == 2:
-            for position in range(pos, width - 3):
+            for position in range(pos, width - 2):
                 if data[position + 2] == 0 and data[position] == 1:
                     message = f"{colorize_swap(data, position, position + 2)} -> "
                     data[position], data[position + 2] = data[position + 2], data[position]
@@ -24,9 +24,8 @@ def n3c_recovery(width: int,
                     if verbose > 0:
                         print(message)
                     count -= 1
-                    if count == 0:
-                        flag = True
-                        break
+                    # if count == 0:
+                    break
             last = 1
         elif last == 1:
             for position in range(pos, width - 1):
@@ -37,9 +36,8 @@ def n3c_recovery(width: int,
                     if verbose > 0:
                         print(message)
                     count -= 1
-                    if count == 0:
-                        flag = True
-                        break
+                    # if count == 0:
+                    break
             last = 2
     return list_to_str(data)
 
