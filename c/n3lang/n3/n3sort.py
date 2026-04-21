@@ -39,6 +39,7 @@ def n3c_sort(input_data: List[int], verbose=0) -> dict:
                     if verbose > 0:
                         print(message)
                     count += 1
+                    last = 2
                     if best == data:
                         break
             first = 1
@@ -51,6 +52,7 @@ def n3c_sort(input_data: List[int], verbose=0) -> dict:
                     if verbose > 0:
                         print(message)
                     count += 1
+                    last = 1
                     if best == data:
                         break
             first = 2

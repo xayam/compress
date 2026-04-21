@@ -14,6 +14,7 @@ def n3c_recovery(width: int,
     data = best[:]
     flag = False
     while (count > 0) and not flag:
+        print(last)
         if last == 2:
             for position in range(pos, width - 3):
                 if data[position + 2] == 0 and data[position] == 1:
