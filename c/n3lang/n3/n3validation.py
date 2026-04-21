@@ -11,7 +11,7 @@ def n3c_validation():
     verbose = 1
     # print(get_annotation())
     # print(f"Decompressing...")
-    for width in range(2, 3):
+    for width in range(4, 5):
         # [8, 32, 512,  65536]
         results = dict()
         for d in range(2 ** width):
@@ -26,7 +26,8 @@ def n3c_validation():
             values.__delitem__("data")
             values.__delitem__("zeros")
             if verbose > 0:
-                print(f"Dempressing...")
+                print(f"Decompressing...")
+                print(values)
             recovery = n3c_recovery(**values)
             assertion = recovery == s
             print(
